@@ -1,0 +1,192 @@
+<!doctype html>
+<html lang="ko">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Seat Map - 2025-33 New Venture Creation (201)</title>
+  <style>
+    :root {
+      --paper-width: 11.7in;
+      --paper-height: 8.3in;
+      --safe-margin: 0.6in;
+      --aisle-width: 1in;
+      --seat-width: 0.44in;
+      --seat-height: 0.28in;
+      --seat-gap: 0.06in;
+      --row-gap: 0.22in;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    html,
+    body {
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      font-family: "Noto Sans KR", "Malgun Gothic", "Apple SD Gothic Neo", sans-serif;
+      color: #111827;
+      background: linear-gradient(135deg, #e6edf7, #f4f6fa);
+    }
+
+    .print-controls {
+      max-width: var(--paper-width);
+      margin: 12px auto 0;
+      padding: 0 8px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-size: 14px;
+    }
+
+    .print-controls button {
+      border: 1px solid #1f2937;
+      background: #ffffff;
+      color: #111827;
+      padding: 6px 10px;
+      cursor: pointer;
+      border-radius: 6px;
+      font-weight: 600;
+    }
+
+    .sheet {
+      width: var(--paper-width);
+      min-height: var(--paper-height);
+      margin: 12px auto 24px;
+      background: #ffffff;
+      box-shadow: 0 14px 40px rgba(17, 24, 39, 0.16);
+      padding: var(--safe-margin);
+      display: flex;
+      flex-direction: column;
+    }
+
+    .title {
+      margin: 0;
+      text-align: center;
+      font-size: 22px;
+      font-weight: 700;
+      letter-spacing: 0.02em;
+    }
+
+    .podium {
+      align-self: center;
+      width: 2.4in;
+      height: 0.56in;
+      margin-top: 0.26in;
+      border: 2.6px solid #111827;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 700;
+      font-size: 15px;
+    }
+
+    .rows {
+      margin-top: 0.42in;
+      display: flex;
+      flex-direction: column;
+      gap: var(--row-gap);
+    }
+
+    .row {
+      display: grid;
+      grid-template-columns: 1fr var(--aisle-width) 1fr;
+      align-items: center;
+      min-height: var(--seat-height);
+    }
+
+    .block {
+      display: flex;
+      gap: var(--seat-gap);
+    }
+
+    .block.left {
+      justify-content: flex-end;
+    }
+
+    .block.right {
+      justify-content: flex-start;
+    }
+
+    .seat {
+      width: var(--seat-width);
+      height: var(--seat-height);
+      border: 1.2px solid #111827;
+      background: #ffffff;
+    }
+
+    @page {
+      size: A4 landscape;
+      margin: 0;
+    }
+
+    @media print {
+      body {
+        background: #ffffff;
+      }
+
+      .print-controls {
+        display: none;
+      }
+
+      .sheet {
+        width: var(--paper-width);
+        height: var(--paper-height);
+        margin: 0;
+        box-shadow: none;
+        page-break-after: avoid;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="print-controls">
+    <span>인쇄 시 A4 가로 / 배율 100% 권장</span>
+    <button type="button" onclick="window.print()">인쇄</button>
+  </div>
+
+  <main class="sheet">
+    <h1 class="title">2025-33 New Venture Creation (201)</h1>
+    <div class="podium">Podium</div>
+    <section class="rows" id="rows" aria-label="Classroom seats"></section>
+  </main>
+
+  <script>
+    const leftCounts = [3, 6, 8, 9, 7];
+    const rightCounts = [2, 6, 8, 9, 6];
+    const rowsElement = document.getElementById("rows");
+
+    const createSeat = () => {
+      const seat = document.createElement("div");
+      seat.className = "seat";
+      return seat;
+    };
+
+    leftCounts.forEach((leftCount, rowIndex) => {
+      const row = document.createElement("div");
+      row.className = "row";
+
+      const leftBlock = document.createElement("div");
+      leftBlock.className = "block left";
+      for (let i = 0; i < leftCount; i += 1) {
+        leftBlock.appendChild(createSeat());
+      }
+
+      const aisle = document.createElement("div");
+      aisle.setAttribute("aria-hidden", "true");
+
+      const rightBlock = document.createElement("div");
+      rightBlock.className = "block right";
+      for (let i = 0; i < rightCounts[rowIndex]; i += 1) {
+        rightBlock.appendChild(createSeat());
+      }
+
+      row.append(leftBlock, aisle, rightBlock);
+      rowsElement.appendChild(row);
+    });
+  </script>
+</body>
+</html>
