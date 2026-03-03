@@ -9,11 +9,11 @@
       --paper-width: 11.7in;
       --paper-height: 8.3in;
       --safe-margin: 0.6in;
-      --aisle-width: 1in;
-      --seat-width: 0.44in;
-      --seat-height: 0.28in;
-      --seat-gap: 0.06in;
-      --row-gap: 0.22in;
+      --aisle-width: 0.36in;
+      --seat-width: 0.52in;
+      --seat-height: 0.34in;
+      --seat-gap: 0.04in;
+      --row-gap: 0.27in;
     }
 
     * {
@@ -93,7 +93,7 @@
 
     .row {
       display: grid;
-      grid-template-columns: 1fr var(--aisle-width) 1fr;
+      grid-template-columns: minmax(0, 1fr) var(--aisle-width) minmax(0, 1fr);
       align-items: center;
       min-height: var(--seat-height);
     }
