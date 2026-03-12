@@ -1,0 +1,496 @@
+<!doctype html>
+<html lang="ko">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Seat Map Generator</title>
+  <style>
+    :root {
+      --paper-width: 11.7in;
+      --paper-height: 8.3in;
+      --safe-margin: 0.6in;
+      --aisle-width: 0.36in;
+      --seat-width: 0.52in;
+      --seat-height: 0.34in;
+      --seat-gap: 0.04in;
+      --row-gap: 0.27in;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    html,
+    body {
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      font-family: "Noto Sans KR", "Malgun Gothic", "Apple SD Gothic Neo", sans-serif;
+      background: linear-gradient(140deg, #f0f4fa, #eef2f7);
+      color: #0f172a;
+    }
+
+    .layout {
+      min-height: 100vh;
+      display: grid;
+      grid-template-columns: 350px 1fr;
+    }
+
+    .controls {
+      padding: 20px 16px;
+      border-right: 1px solid #d4d8e0;
+      background: #f8fafc;
+      overflow: auto;
+    }
+
+    .controls h1 {
+      margin: 0 0 6px;
+      font-size: 20px;
+      font-weight: 700;
+    }
+
+    .controls p {
+      margin: 0 0 14px;
+      font-size: 13px;
+      color: #475569;
+    }
+
+    .field {
+      margin-bottom: 10px;
+    }
+
+    .field label {
+      display: block;
+      font-size: 12px;
+      font-weight: 700;
+      color: #334155;
+      margin-bottom: 4px;
+    }
+
+    .field input,
+    .field textarea {
+      width: 100%;
+      border: 1px solid #cbd5e1;
+      border-radius: 7px;
+      padding: 8px 9px;
+      font: inherit;
+      font-size: 13px;
+      color: #0f172a;
+      background: #ffffff;
+    }
+
+    .field textarea {
+      min-height: 90px;
+      resize: vertical;
+      line-height: 1.45;
+    }
+
+    .size-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 8px;
+    }
+
+    .actions {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 8px;
+      margin-top: 12px;
+    }
+
+    .actions button {
+      border: 1px solid #0f172a;
+      background: #ffffff;
+      color: #0f172a;
+      border-radius: 7px;
+      padding: 8px 10px;
+      cursor: pointer;
+      font: inherit;
+      font-size: 13px;
+      font-weight: 700;
+    }
+
+    .actions button.primary {
+      background: #0f172a;
+      color: #ffffff;
+    }
+
+    .status {
+      margin-top: 10px;
+      font-size: 12px;
+      color: #475569;
+      min-height: 18px;
+    }
+
+    .preview-wrap {
+      padding: 16px;
+      overflow: auto;
+    }
+
+    .sheet {
+      width: var(--paper-width);
+      min-height: var(--paper-height);
+      margin: 0 auto;
+      padding: var(--safe-margin);
+      background: #ffffff;
+      box-shadow: 0 16px 38px rgba(15, 23, 42, 0.16);
+      display: flex;
+      flex-direction: column;
+    }
+
+    .title {
+      margin: 0;
+      text-align: center;
+      font-size: 22px;
+      font-weight: 700;
+      letter-spacing: 0.02em;
+    }
+
+    .podium {
+      align-self: center;
+      width: 2.4in;
+      height: 0.56in;
+      margin-top: 0.26in;
+      border: 2.6px solid #0f172a;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 15px;
+      font-weight: 700;
+      user-select: none;
+    }
+
+    .rows {
+      margin-top: 0.42in;
+      display: flex;
+      flex-direction: column;
+      gap: var(--row-gap);
+    }
+
+    .row {
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) var(--aisle-width) minmax(0, 1fr);
+      align-items: center;
+      min-height: var(--seat-height);
+    }
+
+    .block {
+      display: flex;
+      gap: var(--seat-gap);
+      min-width: 0;
+    }
+
+    .block.left {
+      justify-content: flex-end;
+    }
+
+    .block.right {
+      justify-content: flex-start;
+    }
+
+    .seat {
+      width: var(--seat-width);
+      height: var(--seat-height);
+      border: 1.2px solid #0f172a;
+      padding: 0 3px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+      font-size: 10px;
+      line-height: 1;
+      overflow: hidden;
+      background: #ffffff;
+      white-space: nowrap;
+      outline: none;
+    }
+
+    .seat:focus {
+      border-color: #2563eb;
+      box-shadow: 0 0 0 1px #2563eb;
+    }
+
+    .seat:empty::before {
+      content: "";
+      display: inline-block;
+      width: 100%;
+      height: 1px;
+    }
+
+    @media (max-width: 1000px) {
+      .layout {
+        grid-template-columns: 1fr;
+      }
+
+      .controls {
+        border-right: 0;
+        border-bottom: 1px solid #d4d8e0;
+      }
+    }
+
+    @page {
+      size: A4 landscape;
+      margin: 0;
+    }
+
+    @media print {
+      body {
+        background: #ffffff;
+      }
+
+      .controls {
+        display: none;
+      }
+
+      .layout {
+        display: block;
+      }
+
+      .preview-wrap {
+        padding: 0;
+        overflow: visible;
+      }
+
+      .sheet {
+        width: var(--paper-width);
+        height: var(--paper-height);
+        margin: 0;
+        box-shadow: none;
+      }
+
+      .seat:focus {
+        border-color: #0f172a;
+        box-shadow: none;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="layout">
+    <aside class="controls">
+      <h1>Seat Map Generator</h1>
+      <p>좌석 수/크기를 바꿔가며 도면을 만들고, 박스 안에 직접 이름을 입력하세요.</p>
+
+      <div class="field">
+        <label for="titleInput">제목</label>
+        <input id="titleInput" type="text" value="2025-33 New Venture Creation (201)">
+      </div>
+
+      <div class="field">
+        <label for="podiumInput">Podium 라벨</label>
+        <input id="podiumInput" type="text" value="Podium">
+      </div>
+
+      <div class="field">
+        <label for="leftCountsInput">왼쪽 좌석 수 (쉼표 구분)</label>
+        <input id="leftCountsInput" type="text" value="3,6,8,9,7">
+      </div>
+
+      <div class="field">
+        <label for="rightCountsInput">오른쪽 좌석 수 (쉼표 구분)</label>
+        <input id="rightCountsInput" type="text" value="2,6,8,9,6">
+      </div>
+
+      <div class="size-grid">
+        <div class="field">
+          <label for="aisleWidthInput">복도 폭 (in)</label>
+          <input id="aisleWidthInput" type="number" step="0.01" min="0.2" value="0.36">
+        </div>
+        <div class="field">
+          <label for="seatWidthInput">좌석 폭 (in)</label>
+          <input id="seatWidthInput" type="number" step="0.01" min="0.2" value="0.52">
+        </div>
+        <div class="field">
+          <label for="seatHeightInput">좌석 높이 (in)</label>
+          <input id="seatHeightInput" type="number" step="0.01" min="0.2" value="0.34">
+        </div>
+        <div class="field">
+          <label for="seatGapInput">좌석 간격 (in)</label>
+          <input id="seatGapInput" type="number" step="0.01" min="0.01" value="0.04">
+        </div>
+        <div class="field">
+          <label for="rowGapInput">행 간격 (in)</label>
+          <input id="rowGapInput" type="number" step="0.01" min="0.05" value="0.27">
+        </div>
+      </div>
+
+      <div class="field">
+        <label for="namesInput">이름 목록 (한 줄에 한 명, 자동 채우기용)</label>
+        <textarea id="namesInput" placeholder="홍길동&#10;김영희&#10;..."></textarea>
+      </div>
+
+      <div class="actions">
+        <button class="primary" id="renderButton" type="button">레이아웃 생성</button>
+        <button id="fillNamesButton" type="button">이름 자동 채우기</button>
+        <button id="clearSeatButton" type="button">좌석 내용 비우기</button>
+        <button id="printButton" type="button">인쇄</button>
+      </div>
+
+      <div class="status" id="statusMessage" aria-live="polite"></div>
+    </aside>
+
+    <section class="preview-wrap">
+      <main class="sheet" id="sheet">
+        <h2 class="title" id="sheetTitle"></h2>
+        <div class="podium" id="podiumLabel"></div>
+        <div class="rows" id="rows"></div>
+      </main>
+    </section>
+  </div>
+
+  <script>
+    const ui = {
+      titleInput: document.getElementById("titleInput"),
+      podiumInput: document.getElementById("podiumInput"),
+      leftCountsInput: document.getElementById("leftCountsInput"),
+      rightCountsInput: document.getElementById("rightCountsInput"),
+      aisleWidthInput: document.getElementById("aisleWidthInput"),
+      seatWidthInput: document.getElementById("seatWidthInput"),
+      seatHeightInput: document.getElementById("seatHeightInput"),
+      seatGapInput: document.getElementById("seatGapInput"),
+      rowGapInput: document.getElementById("rowGapInput"),
+      namesInput: document.getElementById("namesInput"),
+      renderButton: document.getElementById("renderButton"),
+      fillNamesButton: document.getElementById("fillNamesButton"),
+      clearSeatButton: document.getElementById("clearSeatButton"),
+      printButton: document.getElementById("printButton"),
+      statusMessage: document.getElementById("statusMessage"),
+      sheetTitle: document.getElementById("sheetTitle"),
+      podiumLabel: document.getElementById("podiumLabel"),
+      rows: document.getElementById("rows")
+    };
+
+    const rootStyle = document.documentElement.style;
+
+    function parseCounts(inputValue) {
+      return inputValue
+        .split(",")
+        .map((item) => item.trim())
+        .filter((item) => item.length > 0)
+        .map((item) => Number(item))
+        .filter((item) => Number.isInteger(item) && item >= 0);
+    }
+
+    function normalizeCounts(leftCounts, rightCounts) {
+      const rowCount = Math.max(leftCounts.length, rightCounts.length);
+      if (rowCount === 0) {
+        return {
+          left: [0],
+          right: [0],
+          message: "좌석 수를 읽지 못해 기본값 0행으로 생성했습니다."
+        };
+      }
+
+      const left = Array.from({ length: rowCount }, (_, idx) => leftCounts[idx] ?? 0);
+      const right = Array.from({ length: rowCount }, (_, idx) => rightCounts[idx] ?? 0);
+      const message = leftCounts.length === rightCounts.length
+        ? ""
+        : "왼쪽/오른쪽 행 개수가 달라 부족한 값은 0으로 채웠습니다.";
+
+      return { left, right, message };
+    }
+
+    function createSeat() {
+      const seat = document.createElement("div");
+      seat.className = "seat";
+      seat.contentEditable = "true";
+      seat.spellcheck = false;
+      seat.setAttribute("role", "textbox");
+      seat.setAttribute("aria-label", "좌석 이름 입력");
+      return seat;
+    }
+
+    function renderLayout() {
+      const title = ui.titleInput.value.trim() || "Untitled";
+      const podiumText = ui.podiumInput.value.trim() || "Podium";
+      const leftCounts = parseCounts(ui.leftCountsInput.value);
+      const rightCounts = parseCounts(ui.rightCountsInput.value);
+      const normalized = normalizeCounts(leftCounts, rightCounts);
+
+      rootStyle.setProperty("--aisle-width", `${Number(ui.aisleWidthInput.value) || 0.36}in`);
+      rootStyle.setProperty("--seat-width", `${Number(ui.seatWidthInput.value) || 0.52}in`);
+      rootStyle.setProperty("--seat-height", `${Number(ui.seatHeightInput.value) || 0.34}in`);
+      rootStyle.setProperty("--seat-gap", `${Number(ui.seatGapInput.value) || 0.04}in`);
+      rootStyle.setProperty("--row-gap", `${Number(ui.rowGapInput.value) || 0.27}in`);
+
+      ui.sheetTitle.textContent = title;
+      ui.podiumLabel.textContent = podiumText;
+      ui.rows.innerHTML = "";
+
+      normalized.left.forEach((leftCount, rowIndex) => {
+        const rightCount = normalized.right[rowIndex];
+        const row = document.createElement("div");
+        row.className = "row";
+
+        const leftBlock = document.createElement("div");
+        leftBlock.className = "block left";
+        for (let i = 0; i < leftCount; i += 1) {
+          leftBlock.appendChild(createSeat());
+        }
+
+        const aisle = document.createElement("div");
+        aisle.setAttribute("aria-hidden", "true");
+
+        const rightBlock = document.createElement("div");
+        rightBlock.className = "block right";
+        for (let i = 0; i < rightCount; i += 1) {
+          rightBlock.appendChild(createSeat());
+        }
+
+        row.append(leftBlock, aisle, rightBlock);
+        ui.rows.appendChild(row);
+      });
+
+      ui.statusMessage.textContent = normalized.message || "레이아웃을 생성했습니다.";
+    }
+
+    function collectSeatsByRowAisleFirst() {
+      const rowElements = Array.from(ui.rows.querySelectorAll(".row"));
+      const orderedSeats = [];
+
+      rowElements.forEach((row) => {
+        const leftSeats = Array.from(row.querySelectorAll(".block.left .seat")).reverse();
+        const rightSeats = Array.from(row.querySelectorAll(".block.right .seat"));
+        orderedSeats.push(...leftSeats, ...rightSeats);
+      });
+
+      return orderedSeats;
+    }
+
+    function fillNames() {
+      const names = ui.namesInput.value
+        .split("\n")
+        .map((line) => line.trim())
+        .filter((line) => line.length > 0);
+
+      const seats = collectSeatsByRowAisleFirst();
+      seats.forEach((seat, idx) => {
+        seat.textContent = names[idx] ?? "";
+      });
+
+      const filled = Math.min(names.length, seats.length);
+      const remainder = names.length > seats.length
+        ? ` / ${names.length - seats.length}명은 좌석이 부족해 반영되지 않았습니다.`
+        : "";
+      ui.statusMessage.textContent = `${filled}개 좌석에 이름을 채웠습니다${remainder}`;
+    }
+
+    function clearSeats() {
+      const seats = ui.rows.querySelectorAll(".seat");
+      seats.forEach((seat) => {
+        seat.textContent = "";
+      });
+      ui.statusMessage.textContent = "좌석 내용을 모두 비웠습니다.";
+    }
+
+    ui.renderButton.addEventListener("click", renderLayout);
+    ui.fillNamesButton.addEventListener("click", fillNames);
+    ui.clearSeatButton.addEventListener("click", clearSeats);
+    ui.printButton.addEventListener("click", () => window.print());
+
+    renderLayout();
+  </script>
+</body>
+</html>
