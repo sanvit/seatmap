@@ -632,7 +632,7 @@
         return;
       }
 
-      ui.recordMeta.textContent = `현재 record: ${record.id} / 마지막 수정 ${SeatmapApp.formatDate(record.updated || record.created)}`;
+      ui.recordMeta.textContent = `현재 record: ${record.id} / 마지막 수정 ${record.updated || record.created ? SeatmapApp.formatDate(record.updated || record.created) : "시간 정보 없음"}`;
     }
 
     function updateSaveButtonState() {
