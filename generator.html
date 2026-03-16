@@ -6,8 +6,8 @@
   <title>Seat Map Generator</title>
   <style>
     :root {
-      --paper-width: 11.7in;
-      --paper-height: 8.3in;
+      --paper-width: 11.69in;
+      --paper-height: 8.27in;
       --safe-margin: 0.6in;
       --aisle-width: 0.36in;
       --seat-width: 0.52in;
@@ -314,10 +314,11 @@
 
       .sheet {
         width: var(--paper-width);
+        min-height: 0;
         height: var(--paper-height);
         margin: 0;
         box-shadow: none;
-        page-break-after: avoid;
+        page-break-after: auto;
       }
 
       .seat:focus {
