@@ -106,7 +106,7 @@
 
   async function listSeatmaps() {
     return request(
-      `/api/collections/${config.seatmapCollection}/records?page=1&perPage=100&fields=id,title,rowCount,seatCount`,
+      `/api/collections/${config.seatmapCollection}/records?page=1&perPage=100&sort=-updatedAt&fields=id,title,rowCount,seatCount,createdAt,updatedAt`,
       {
         headers: getAuthHeaders()
       }

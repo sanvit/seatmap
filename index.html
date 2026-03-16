@@ -339,7 +339,7 @@
             <span class="chip">${item.rowCount || 0} rows</span>
             <span class="chip">${item.seatCount || 0} seats</span>
           </div>
-          <div class="meta">수정: ${item.updated || item.created ? SeatmapApp.formatDate(item.updated || item.created) : "시간 정보 없음"}</div>
+          <div class="meta">수정: ${item.updatedAt || item.createdAt || item.updated || item.created ? SeatmapApp.formatDate(item.updatedAt || item.createdAt || item.updated || item.created) : "시간 정보 없음"}</div>
           <div class="card-actions">
             <div class="status">record id: ${item.id}</div>
             <a class="button primary" href="./generator.html?id=${encodeURIComponent(item.id)}">열기</a>
