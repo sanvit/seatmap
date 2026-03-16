@@ -264,12 +264,14 @@
 
     /* Preview Area */
     .preview-wrap {
-      padding: 48px;
       overflow: auto;
       min-width: 0;
-      display: flex;
-      align-items: flex-start;
-      justify-content: center;
+    }
+
+    .preview-stage {
+      width: max-content;
+      padding: 48px;
+      margin: 0 auto;
     }
 
     .sheet {
@@ -402,19 +404,25 @@
 
       .preview-wrap {
         width: 100%;
-        padding: 24px 16px 28px;
-        justify-content: flex-start;
         overflow-x: auto;
         overflow-y: auto;
         -webkit-overflow-scrolling: touch;
         scroll-padding-inline: 16px;
       }
+
+      .preview-stage {
+        padding: 24px 16px 28px;
+        margin: 0;
+      }
     }
 
     @media (max-width: 640px) {
       .preview-wrap {
-        padding: 16px 12px 20px;
         scroll-padding-inline: 12px;
+      }
+
+      .preview-stage {
+        padding: 16px 12px 20px;
       }
     }
 
@@ -442,8 +450,13 @@
       }
 
       .preview-wrap {
-        padding: 0;
         overflow: visible;
+      }
+
+      .preview-stage {
+        width: auto;
+        padding: 0;
+        margin: 0;
       }
 
       .sheet {
@@ -570,11 +583,13 @@
     </aside>
 
     <section class="preview-wrap">
-      <main class="sheet" id="sheet">
-        <h2 class="title" id="sheetTitle"></h2>
-        <div class="podium" id="podiumLabel"></div>
-        <div class="rows" id="rows"></div>
-      </main>
+      <div class="preview-stage">
+        <main class="sheet" id="sheet">
+          <h2 class="title" id="sheetTitle"></h2>
+          <div class="podium" id="podiumLabel"></div>
+          <div class="rows" id="rows"></div>
+        </main>
+      </div>
     </section>
   </div>
 
