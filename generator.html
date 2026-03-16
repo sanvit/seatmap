@@ -266,6 +266,7 @@
     .preview-wrap {
       padding: 48px;
       overflow: auto;
+      min-width: 0;
       display: flex;
       align-items: flex-start;
       justify-content: center;
@@ -400,8 +401,20 @@
       }
 
       .preview-wrap {
-        padding: 24px;
+        width: 100%;
+        padding: 24px 16px 28px;
         justify-content: flex-start;
+        overflow-x: auto;
+        overflow-y: auto;
+        -webkit-overflow-scrolling: touch;
+        scroll-padding-inline: 16px;
+      }
+    }
+
+    @media (max-width: 640px) {
+      .preview-wrap {
+        padding: 16px 12px 20px;
+        scroll-padding-inline: 12px;
       }
     }
 
