@@ -3,17 +3,20 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Seat Map - 2025-33 New Venture Creation (201)</title>
+  <title>Seat Map Library</title>
   <style>
     :root {
-      --paper-width: 11.7in;
-      --paper-height: 8.3in;
-      --safe-margin: 0.6in;
-      --aisle-width: 0.36in;
-      --seat-width: 0.52in;
-      --seat-height: 0.34in;
-      --seat-gap: 0.04in;
-      --row-gap: 0.27in;
+      --bg-top: #f4efe6;
+      --bg-bottom: #dbe7f4;
+      --panel: rgba(255, 252, 248, 0.88);
+      --panel-strong: rgba(255, 255, 255, 0.96);
+      --line: rgba(15, 23, 42, 0.12);
+      --text: #162033;
+      --muted: #5a6578;
+      --accent: #be5b2c;
+      --accent-dark: #8b401d;
+      --shadow: 0 24px 60px rgba(22, 32, 51, 0.12);
+      --radius: 24px;
     }
 
     * {
@@ -23,170 +26,361 @@
     html,
     body {
       margin: 0;
-      padding: 0;
+      min-height: 100%;
     }
 
     body {
-      font-family: "Noto Sans KR", "Malgun Gothic", "Apple SD Gothic Neo", sans-serif;
-      color: #111827;
-      background: linear-gradient(135deg, #e6edf7, #f4f6fa);
+      font-family: "Pretendard Variable", "Noto Sans KR", sans-serif;
+      color: var(--text);
+      background:
+        radial-gradient(circle at top left, rgba(190, 91, 44, 0.16), transparent 22%),
+        radial-gradient(circle at right 16%, rgba(44, 95, 152, 0.16), transparent 24%),
+        linear-gradient(145deg, var(--bg-top), var(--bg-bottom));
+      padding: 24px;
     }
 
-    .print-controls {
-      max-width: var(--paper-width);
-      margin: 12px auto 0;
-      padding: 0 8px;
+    .page {
+      max-width: 1200px;
+      margin: 0 auto;
+      display: grid;
+      gap: 18px;
+    }
+
+    .hero,
+    .panel {
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      background: var(--panel);
+      backdrop-filter: blur(14px);
+      box-shadow: var(--shadow);
+    }
+
+    .hero {
+      padding: 28px;
+      display: grid;
+      gap: 18px;
+      grid-template-columns: minmax(0, 1.2fr) minmax(320px, 0.8fr);
+      align-items: start;
+    }
+
+    .hero h1 {
+      margin: 0;
+      font-size: clamp(32px, 4vw, 52px);
+      line-height: 0.96;
+      letter-spacing: -0.04em;
+      font-weight: 800;
+    }
+
+    .hero p {
+      margin: 0;
+      max-width: 620px;
+      font-size: 15px;
+      line-height: 1.6;
+      color: var(--muted);
+    }
+
+    .hero-actions {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      margin-top: 14px;
+    }
+
+    a.button,
+    button {
+      border: 0;
+      border-radius: 999px;
+      padding: 12px 18px;
+      font: inherit;
+      font-weight: 700;
+      cursor: pointer;
+      text-decoration: none;
+      transition: transform 0.18s ease, box-shadow 0.18s ease, background 0.18s ease;
+    }
+
+    a.button:hover,
+    button:hover {
+      transform: translateY(-1px);
+    }
+
+    .button.primary,
+    button.primary {
+      color: #fffaf3;
+      background: linear-gradient(135deg, var(--accent), var(--accent-dark));
+      box-shadow: 0 12px 24px rgba(139, 64, 29, 0.2);
+    }
+
+    .button.secondary,
+    button.secondary {
+      color: var(--text);
+      background: rgba(255, 255, 255, 0.78);
+      border: 1px solid var(--line);
+    }
+
+    .auth-card {
+      padding: 18px;
+      border-radius: 22px;
+      background: var(--panel-strong);
+      border: 1px solid rgba(15, 23, 42, 0.08);
+      display: grid;
+      gap: 12px;
+    }
+
+    .auth-card h2 {
+      margin: 0;
+      font-size: 18px;
+    }
+
+    .field {
+      display: grid;
+      gap: 6px;
+    }
+
+    .field label {
+      font-size: 12px;
+      font-weight: 700;
+      color: var(--muted);
+    }
+
+    .field input {
+      width: 100%;
+      border: 1px solid rgba(15, 23, 42, 0.14);
+      border-radius: 14px;
+      padding: 12px 14px;
+      font: inherit;
+      background: #fffdf9;
+      color: var(--text);
+    }
+
+    .auth-actions {
+      display: flex;
+      gap: 10px;
+      align-items: center;
+    }
+
+    .status,
+    .empty,
+    .meta {
+      font-size: 13px;
+      color: var(--muted);
+    }
+
+    .panel {
+      padding: 24px;
+    }
+
+    .panel-head {
       display: flex;
       justify-content: space-between;
       align-items: center;
-      font-size: 14px;
+      gap: 12px;
+      margin-bottom: 18px;
     }
 
-    .print-controls button {
-      border: 1px solid #1f2937;
-      background: #ffffff;
-      color: #111827;
-      padding: 6px 10px;
-      cursor: pointer;
-      border-radius: 6px;
-      font-weight: 600;
-    }
-
-    .sheet {
-      width: var(--paper-width);
-      min-height: var(--paper-height);
-      margin: 12px auto 24px;
-      background: #ffffff;
-      box-shadow: 0 14px 40px rgba(17, 24, 39, 0.16);
-      padding: var(--safe-margin);
-      display: flex;
-      flex-direction: column;
-    }
-
-    .title {
+    .panel-head h2 {
       margin: 0;
-      text-align: center;
-      font-size: 22px;
-      font-weight: 700;
-      letter-spacing: 0.02em;
+      font-size: 24px;
     }
 
-    .podium {
-      align-self: center;
-      width: 2.4in;
-      height: 0.56in;
-      margin-top: 0.26in;
-      border: 2.6px solid #111827;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-weight: 700;
-      font-size: 15px;
-    }
-
-    .rows {
-      margin-top: 0.42in;
-      display: flex;
-      flex-direction: column;
-      gap: var(--row-gap);
-    }
-
-    .row {
+    .list {
       display: grid;
-      grid-template-columns: minmax(0, 1fr) var(--aisle-width) minmax(0, 1fr);
-      align-items: center;
-      min-height: var(--seat-height);
+      grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+      gap: 14px;
     }
 
-    .block {
-      display: flex;
-      gap: var(--seat-gap);
+    .card {
+      padding: 18px;
+      border-radius: 22px;
+      background: rgba(255, 255, 255, 0.84);
+      border: 1px solid rgba(15, 23, 42, 0.08);
+      display: grid;
+      gap: 10px;
+      min-height: 190px;
     }
 
-    .block.left {
-      justify-content: flex-end;
-    }
-
-    .block.right {
-      justify-content: flex-start;
-    }
-
-    .seat {
-      width: var(--seat-width);
-      height: var(--seat-height);
-      border: 1.2px solid #111827;
-      background: #ffffff;
-    }
-
-    @page {
-      size: A4 landscape;
+    .card h3 {
       margin: 0;
+      font-size: 20px;
+      letter-spacing: -0.03em;
     }
 
-    @media print {
+    .chip-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+    }
+
+    .chip {
+      padding: 6px 10px;
+      border-radius: 999px;
+      font-size: 12px;
+      font-weight: 700;
+      background: rgba(22, 32, 51, 0.06);
+      color: var(--text);
+    }
+
+    .card-actions {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 10px;
+      margin-top: auto;
+    }
+
+    @media (max-width: 860px) {
       body {
-        background: #ffffff;
+        padding: 16px;
       }
 
-      .print-controls {
-        display: none;
+      .hero {
+        grid-template-columns: 1fr;
+        padding: 22px;
       }
 
-      .sheet {
-        width: var(--paper-width);
-        height: var(--paper-height);
-        margin: 0;
-        box-shadow: none;
-        page-break-after: avoid;
+      .panel {
+        padding: 18px;
+      }
+
+      .panel-head {
+        align-items: start;
+        flex-direction: column;
       }
     }
   </style>
 </head>
 <body>
-  <div class="print-controls">
-    <span>인쇄 시 A4 가로 / 배율 100% 권장</span>
-    <button type="button" onclick="window.print()">인쇄</button>
-  </div>
+  <main class="page">
+    <section class="hero">
+      <div>
+        <h1>Seatmaps for real classrooms.</h1>
+        <p>Generator에서 만든 좌석 배치를 PocketBase에 저장하고, 여기서 바로 기존 배치를 다시 열어 수정할 수 있습니다.</p>
+        <div class="hero-actions">
+          <a class="button primary" href="./generator.html">새 seatmap 만들기</a>
+          <button class="secondary" id="refreshButton" type="button">목록 새로고침</button>
+        </div>
+      </div>
 
-  <main class="sheet">
-    <h1 class="title">2025-33 New Venture Creation (201)</h1>
-    <div class="podium">Podium</div>
-    <section class="rows" id="rows" aria-label="Classroom seats"></section>
+      <section class="auth-card" aria-label="PocketBase 로그인">
+        <h2>로그인</h2>
+        <div class="field">
+          <label for="emailInput">이메일</label>
+          <input id="emailInput" type="email" placeholder="sanvit@sanvit.me" value="sanvit@sanvit.me">
+        </div>
+        <div class="field">
+          <label for="passwordInput">비밀번호</label>
+          <input id="passwordInput" type="password" placeholder="비밀번호" value="Happyday23!@!@">
+        </div>
+        <div class="auth-actions">
+          <button class="primary" id="loginButton" type="button">로그인</button>
+          <button class="secondary" id="logoutButton" type="button">로그아웃</button>
+        </div>
+        <div class="status" id="authStatus">로그인하면 저장된 seatmap 목록이 표시됩니다.</div>
+      </section>
+    </section>
+
+    <section class="panel">
+      <div class="panel-head">
+        <div>
+          <h2>저장된 seatmaps</h2>
+          <div class="meta" id="listMeta">로그인 전입니다.</div>
+        </div>
+        <a class="button secondary" href="./generator.html">Generator로 이동</a>
+      </div>
+      <div class="list" id="seatmapList"></div>
+      <div class="empty" id="emptyState">저장된 seatmap이 없습니다.</div>
+    </section>
   </main>
 
+  <script src="./seatmap-app.js"></script>
   <script>
-    const leftCounts = [3, 6, 8, 9, 7];
-    const rightCounts = [2, 6, 8, 9, 6];
-    const rowsElement = document.getElementById("rows");
-
-    const createSeat = () => {
-      const seat = document.createElement("div");
-      seat.className = "seat";
-      return seat;
+    const ui = {
+      authStatus: document.getElementById("authStatus"),
+      emailInput: document.getElementById("emailInput"),
+      passwordInput: document.getElementById("passwordInput"),
+      loginButton: document.getElementById("loginButton"),
+      logoutButton: document.getElementById("logoutButton"),
+      refreshButton: document.getElementById("refreshButton"),
+      listMeta: document.getElementById("listMeta"),
+      seatmapList: document.getElementById("seatmapList"),
+      emptyState: document.getElementById("emptyState")
     };
 
-    leftCounts.forEach((leftCount, rowIndex) => {
-      const row = document.createElement("div");
-      row.className = "row";
+    function setAuthMessage(message) {
+      ui.authStatus.textContent = message;
+    }
 
-      const leftBlock = document.createElement("div");
-      leftBlock.className = "block left";
-      for (let i = 0; i < leftCount; i += 1) {
-        leftBlock.appendChild(createSeat());
+    function renderList(items) {
+      ui.seatmapList.innerHTML = "";
+      ui.emptyState.hidden = items.length > 0;
+
+      items.forEach((item) => {
+        const card = document.createElement("article");
+        card.className = "card";
+        card.innerHTML = `
+          <h3>${item.title}</h3>
+          <div class="chip-row">
+            <span class="chip">${item.rowCount || 0} rows</span>
+            <span class="chip">${item.seatCount || 0} seats</span>
+          </div>
+          <div class="meta">수정: ${SeatmapApp.formatDate(item.updated || item.created)}</div>
+          <div class="card-actions">
+            <div class="status">record id: ${item.id}</div>
+            <a class="button primary" href="./generator.html?id=${encodeURIComponent(item.id)}">열기</a>
+          </div>
+        `;
+        ui.seatmapList.appendChild(card);
+      });
+    }
+
+    async function refreshList() {
+      const auth = SeatmapApp.getStoredAuth();
+      if (!auth) {
+        ui.listMeta.textContent = "로그인 후 개인 seatmap 목록을 볼 수 있습니다.";
+        renderList([]);
+        setAuthMessage("로그인하면 저장된 seatmap 목록이 표시됩니다.");
+        return;
       }
 
-      const aisle = document.createElement("div");
-      aisle.setAttribute("aria-hidden", "true");
+      const result = await SeatmapApp.listSeatmaps();
+      const items = result.items || [];
+      ui.listMeta.textContent = `${auth.record.email} 계정으로 ${items.length}개의 seatmap을 조회했습니다.`;
+      renderList(items);
+      setAuthMessage(`${auth.record.email} 계정으로 로그인되어 있습니다.`);
+    }
 
-      const rightBlock = document.createElement("div");
-      rightBlock.className = "block right";
-      for (let i = 0; i < rightCounts[rowIndex]; i += 1) {
-        rightBlock.appendChild(createSeat());
+    ui.loginButton.addEventListener("click", async () => {
+      try {
+        const auth = await SeatmapApp.login(ui.emailInput.value.trim(), ui.passwordInput.value);
+        setAuthMessage(`${auth.record.email} 계정으로 로그인되었습니다.`);
+        await refreshList();
+      } catch (error) {
+        setAuthMessage(error.message || "로그인에 실패했습니다.");
       }
-
-      row.append(leftBlock, aisle, rightBlock);
-      rowsElement.appendChild(row);
     });
+
+    ui.logoutButton.addEventListener("click", () => {
+      SeatmapApp.logout();
+      renderList([]);
+      ui.listMeta.textContent = "로그인 전입니다.";
+      setAuthMessage("로그아웃했습니다.");
+    });
+
+    ui.refreshButton.addEventListener("click", async () => {
+      try {
+        await refreshList();
+      } catch (error) {
+        setAuthMessage(error.message || "목록을 새로고침하지 못했습니다.");
+      }
+    });
+
+    (async () => {
+      try {
+        await SeatmapApp.verifyAuth();
+        await refreshList();
+      } catch (error) {
+        setAuthMessage(error.message || "PocketBase 연결에 실패했습니다.");
+      }
+    })();
   </script>
 </body>
 </html>

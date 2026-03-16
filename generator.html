@@ -14,6 +14,14 @@
       --seat-height: 0.34in;
       --seat-gap: 0.04in;
       --row-gap: 0.27in;
+      --bg-top: #f3ecdf;
+      --bg-bottom: #d7e3ee;
+      --panel: rgba(253, 250, 246, 0.9);
+      --line: rgba(15, 23, 42, 0.12);
+      --text: #132034;
+      --muted: #536074;
+      --accent: #b8572d;
+      --accent-dark: #8c3f1c;
     }
 
     * {
@@ -24,37 +32,62 @@
     body {
       margin: 0;
       padding: 0;
+      min-height: 100%;
     }
 
     body {
-      font-family: "Noto Sans KR", "Malgun Gothic", "Apple SD Gothic Neo", sans-serif;
-      background: linear-gradient(140deg, #f0f4fa, #eef2f7);
-      color: #0f172a;
+      font-family: "Pretendard Variable", "Noto Sans KR", sans-serif;
+      background:
+        radial-gradient(circle at top left, rgba(184, 87, 45, 0.14), transparent 24%),
+        radial-gradient(circle at right 14%, rgba(51, 102, 153, 0.14), transparent 22%),
+        linear-gradient(145deg, var(--bg-top), var(--bg-bottom));
+      color: var(--text);
     }
 
     .layout {
       min-height: 100vh;
       display: grid;
-      grid-template-columns: 350px 1fr;
+      grid-template-columns: 390px 1fr;
     }
 
     .controls {
-      padding: 20px 16px;
-      border-right: 1px solid #d4d8e0;
-      background: #f8fafc;
+      padding: 20px 16px 24px;
+      border-right: 1px solid var(--line);
+      background: var(--panel);
+      backdrop-filter: blur(12px);
       overflow: auto;
     }
 
     .controls h1 {
       margin: 0 0 6px;
-      font-size: 20px;
-      font-weight: 700;
+      font-size: 28px;
+      line-height: 1;
+      letter-spacing: -0.04em;
     }
 
     .controls p {
-      margin: 0 0 14px;
+      margin: 0 0 16px;
       font-size: 13px;
-      color: #475569;
+      line-height: 1.5;
+      color: var(--muted);
+    }
+
+    .stack {
+      display: grid;
+      gap: 12px;
+    }
+
+    .panel {
+      padding: 14px;
+      border-radius: 20px;
+      border: 1px solid rgba(15, 23, 42, 0.08);
+      background: rgba(255, 255, 255, 0.8);
+      box-shadow: 0 14px 30px rgba(15, 23, 42, 0.06);
+    }
+
+    .panel h2 {
+      margin: 0 0 8px;
+      font-size: 16px;
     }
 
     .field {
@@ -65,20 +98,20 @@
       display: block;
       font-size: 12px;
       font-weight: 700;
-      color: #334155;
+      color: var(--muted);
       margin-bottom: 4px;
     }
 
     .field input,
     .field textarea {
       width: 100%;
-      border: 1px solid #cbd5e1;
-      border-radius: 7px;
-      padding: 8px 9px;
+      border: 1px solid rgba(15, 23, 42, 0.14);
+      border-radius: 12px;
+      padding: 10px 11px;
       font: inherit;
       font-size: 13px;
-      color: #0f172a;
-      background: #ffffff;
+      color: var(--text);
+      background: #fffdf9;
     }
 
     .field textarea {
@@ -87,41 +120,59 @@
       line-height: 1.45;
     }
 
-    .size-grid {
+    .size-grid,
+    .auth-grid {
       display: grid;
       grid-template-columns: 1fr 1fr;
       gap: 8px;
     }
 
-    .actions {
+    .actions,
+    .top-links {
       display: grid;
       grid-template-columns: 1fr 1fr;
       gap: 8px;
-      margin-top: 12px;
     }
 
-    .actions button {
-      border: 1px solid #0f172a;
+    .actions button,
+    .auth-actions button,
+    .link-button {
+      border: 0;
       background: #ffffff;
-      color: #0f172a;
-      border-radius: 7px;
-      padding: 8px 10px;
+      color: var(--text);
+      border-radius: 999px;
+      padding: 10px 12px;
       cursor: pointer;
       font: inherit;
       font-size: 13px;
       font-weight: 700;
+      text-align: center;
+      text-decoration: none;
+      box-shadow: inset 0 0 0 1px rgba(15, 23, 42, 0.12);
     }
 
-    .actions button.primary {
-      background: #0f172a;
-      color: #ffffff;
+    .actions button.primary,
+    .auth-actions button.primary,
+    .link-button.primary {
+      background: linear-gradient(135deg, var(--accent), var(--accent-dark));
+      color: #fff8f3;
+      box-shadow: none;
     }
 
+    .auth-actions {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 8px;
+      margin-top: 10px;
+    }
+
+    .record-meta,
     .status {
       margin-top: 10px;
       font-size: 12px;
-      color: #475569;
+      color: var(--muted);
       min-height: 18px;
+      line-height: 1.5;
     }
 
     .preview-wrap {
@@ -135,7 +186,7 @@
       margin: 0 auto;
       padding: var(--safe-margin);
       background: #ffffff;
-      box-shadow: 0 16px 38px rgba(15, 23, 42, 0.16);
+      box-shadow: 0 20px 48px rgba(15, 23, 42, 0.16);
       display: flex;
       flex-direction: column;
     }
@@ -153,7 +204,7 @@
       width: 2.4in;
       height: 0.56in;
       margin-top: 0.26in;
-      border: 2.6px solid #0f172a;
+      border: 2.6px solid var(--text);
       display: flex;
       align-items: center;
       justify-content: center;
@@ -193,7 +244,7 @@
     .seat {
       width: var(--seat-width);
       height: var(--seat-height);
-      border: 1.2px solid #0f172a;
+      border: 1.2px solid var(--text);
       padding: 0 3px;
       display: flex;
       align-items: center;
@@ -208,8 +259,8 @@
     }
 
     .seat:focus {
-      border-color: #2563eb;
-      box-shadow: 0 0 0 1px #2563eb;
+      border-color: #2358a0;
+      box-shadow: 0 0 0 1px #2358a0;
     }
 
     .seat:empty::before {
@@ -219,14 +270,14 @@
       height: 1px;
     }
 
-    @media (max-width: 1000px) {
+    @media (max-width: 1100px) {
       .layout {
         grid-template-columns: 1fr;
       }
 
       .controls {
         border-right: 0;
-        border-bottom: 1px solid #d4d8e0;
+        border-bottom: 1px solid var(--line);
       }
     }
 
@@ -258,10 +309,11 @@
         height: var(--paper-height);
         margin: 0;
         box-shadow: none;
+        page-break-after: avoid;
       }
 
       .seat:focus {
-        border-color: #0f172a;
+        border-color: var(--text);
         box-shadow: none;
       }
     }
@@ -271,64 +323,101 @@
   <div class="layout">
     <aside class="controls">
       <h1>Seat Map Generator</h1>
-      <p>좌석 수/크기를 바꿔가며 도면을 만들고, 박스 안에 직접 이름을 입력하세요.</p>
+      <p>레이아웃을 만든 뒤 바로 수정하고 PocketBase에 저장할 수 있습니다. 기존 저장본은 `index` 또는 `?id=` 링크로 다시 열립니다.</p>
 
-      <div class="field">
-        <label for="titleInput">제목</label>
-        <input id="titleInput" type="text" value="2025-33 New Venture Creation (201)">
+      <div class="stack">
+        <section class="panel">
+          <h2>PocketBase 로그인</h2>
+          <div class="auth-grid">
+            <div class="field">
+              <label for="emailInput">이메일</label>
+              <input id="emailInput" type="email" value="sanvit@sanvit.me">
+            </div>
+            <div class="field">
+              <label for="passwordInput">비밀번호</label>
+              <input id="passwordInput" type="password" value="Happyday23!@!@">
+            </div>
+          </div>
+          <div class="auth-actions">
+            <button class="primary" id="loginButton" type="button">로그인</button>
+            <button id="logoutButton" type="button">로그아웃</button>
+          </div>
+          <div class="record-meta" id="authMessage">로그인하면 저장 버튼이 활성화됩니다.</div>
+        </section>
+
+        <section class="panel">
+          <h2>파일</h2>
+          <div class="top-links">
+            <a class="link-button" href="./index.html">목록으로</a>
+            <a class="link-button primary" href="./generator.html">새 seatmap</a>
+          </div>
+          <div class="record-meta" id="recordMeta">새 seatmap을 만드는 중입니다.</div>
+        </section>
+
+        <section class="panel">
+          <h2>레이아웃</h2>
+          <div class="field">
+            <label for="titleInput">제목</label>
+            <input id="titleInput" type="text" value="2025-33 New Venture Creation (201)">
+          </div>
+
+          <div class="field">
+            <label for="podiumInput">Podium 라벨</label>
+            <input id="podiumInput" type="text" value="Podium">
+          </div>
+
+          <div class="field">
+            <label for="leftCountsInput">왼쪽 좌석 수 (쉼표 구분)</label>
+            <input id="leftCountsInput" type="text" value="3,6,8,9,7">
+          </div>
+
+          <div class="field">
+            <label for="rightCountsInput">오른쪽 좌석 수 (쉼표 구분)</label>
+            <input id="rightCountsInput" type="text" value="2,6,8,9,6">
+          </div>
+
+          <div class="size-grid">
+            <div class="field">
+              <label for="aisleWidthInput">복도 폭 (in)</label>
+              <input id="aisleWidthInput" type="number" step="0.01" min="0.2" value="0.36">
+            </div>
+            <div class="field">
+              <label for="seatWidthInput">좌석 폭 (in)</label>
+              <input id="seatWidthInput" type="number" step="0.01" min="0.2" value="0.52">
+            </div>
+            <div class="field">
+              <label for="seatHeightInput">좌석 높이 (in)</label>
+              <input id="seatHeightInput" type="number" step="0.01" min="0.2" value="0.34">
+            </div>
+            <div class="field">
+              <label for="seatGapInput">좌석 간격 (in)</label>
+              <input id="seatGapInput" type="number" step="0.01" min="0.01" value="0.04">
+            </div>
+            <div class="field">
+              <label for="rowGapInput">행 간격 (in)</label>
+              <input id="rowGapInput" type="number" step="0.01" min="0.05" value="0.27">
+            </div>
+          </div>
+        </section>
+
+        <section class="panel">
+          <h2>이름 입력</h2>
+          <div class="field">
+            <label for="namesInput">이름 목록 (한 줄에 한 명, 자동 채우기용)</label>
+            <textarea id="namesInput" placeholder="홍길동&#10;김영희&#10;..."></textarea>
+          </div>
+
+          <div class="actions">
+            <button class="primary" id="renderButton" type="button">레이아웃 생성</button>
+            <button id="fillNamesButton" type="button">이름 자동 채우기</button>
+            <button id="clearSeatButton" type="button">좌석 내용 비우기</button>
+            <button id="printButton" type="button">인쇄</button>
+            <button class="primary" id="saveButton" type="button">PocketBase 저장</button>
+          </div>
+
+          <div class="status" id="statusMessage" aria-live="polite"></div>
+        </section>
       </div>
-
-      <div class="field">
-        <label for="podiumInput">Podium 라벨</label>
-        <input id="podiumInput" type="text" value="Podium">
-      </div>
-
-      <div class="field">
-        <label for="leftCountsInput">왼쪽 좌석 수 (쉼표 구분)</label>
-        <input id="leftCountsInput" type="text" value="3,6,8,9,7">
-      </div>
-
-      <div class="field">
-        <label for="rightCountsInput">오른쪽 좌석 수 (쉼표 구분)</label>
-        <input id="rightCountsInput" type="text" value="2,6,8,9,6">
-      </div>
-
-      <div class="size-grid">
-        <div class="field">
-          <label for="aisleWidthInput">복도 폭 (in)</label>
-          <input id="aisleWidthInput" type="number" step="0.01" min="0.2" value="0.36">
-        </div>
-        <div class="field">
-          <label for="seatWidthInput">좌석 폭 (in)</label>
-          <input id="seatWidthInput" type="number" step="0.01" min="0.2" value="0.52">
-        </div>
-        <div class="field">
-          <label for="seatHeightInput">좌석 높이 (in)</label>
-          <input id="seatHeightInput" type="number" step="0.01" min="0.2" value="0.34">
-        </div>
-        <div class="field">
-          <label for="seatGapInput">좌석 간격 (in)</label>
-          <input id="seatGapInput" type="number" step="0.01" min="0.01" value="0.04">
-        </div>
-        <div class="field">
-          <label for="rowGapInput">행 간격 (in)</label>
-          <input id="rowGapInput" type="number" step="0.01" min="0.05" value="0.27">
-        </div>
-      </div>
-
-      <div class="field">
-        <label for="namesInput">이름 목록 (한 줄에 한 명, 자동 채우기용)</label>
-        <textarea id="namesInput" placeholder="홍길동&#10;김영희&#10;..."></textarea>
-      </div>
-
-      <div class="actions">
-        <button class="primary" id="renderButton" type="button">레이아웃 생성</button>
-        <button id="fillNamesButton" type="button">이름 자동 채우기</button>
-        <button id="clearSeatButton" type="button">좌석 내용 비우기</button>
-        <button id="printButton" type="button">인쇄</button>
-      </div>
-
-      <div class="status" id="statusMessage" aria-live="polite"></div>
     </aside>
 
     <section class="preview-wrap">
@@ -340,8 +429,15 @@
     </section>
   </div>
 
+  <script src="./seatmap-app.js"></script>
   <script>
     const ui = {
+      authMessage: document.getElementById("authMessage"),
+      emailInput: document.getElementById("emailInput"),
+      passwordInput: document.getElementById("passwordInput"),
+      loginButton: document.getElementById("loginButton"),
+      logoutButton: document.getElementById("logoutButton"),
+      recordMeta: document.getElementById("recordMeta"),
       titleInput: document.getElementById("titleInput"),
       podiumInput: document.getElementById("podiumInput"),
       leftCountsInput: document.getElementById("leftCountsInput"),
@@ -356,6 +452,7 @@
       fillNamesButton: document.getElementById("fillNamesButton"),
       clearSeatButton: document.getElementById("clearSeatButton"),
       printButton: document.getElementById("printButton"),
+      saveButton: document.getElementById("saveButton"),
       statusMessage: document.getElementById("statusMessage"),
       sheetTitle: document.getElementById("sheetTitle"),
       podiumLabel: document.getElementById("podiumLabel"),
@@ -363,6 +460,8 @@
     };
 
     const rootStyle = document.documentElement.style;
+    const params = new URLSearchParams(window.location.search);
+    let currentRecordId = params.get("id");
 
     function parseCounts(inputValue) {
       return inputValue
@@ -402,19 +501,30 @@
       return seat;
     }
 
-    function renderLayout() {
-      const title = ui.titleInput.value.trim() || "Untitled";
-      const podiumText = ui.podiumInput.value.trim() || "Podium";
-      const leftCounts = parseCounts(ui.leftCountsInput.value);
-      const rightCounts = parseCounts(ui.rightCountsInput.value);
+    function applyDimensions(dimensions) {
+      rootStyle.setProperty("--aisle-width", `${Number(dimensions.aisleWidth) || 0.36}in`);
+      rootStyle.setProperty("--seat-width", `${Number(dimensions.seatWidth) || 0.52}in`);
+      rootStyle.setProperty("--seat-height", `${Number(dimensions.seatHeight) || 0.34}in`);
+      rootStyle.setProperty("--seat-gap", `${Number(dimensions.seatGap) || 0.04}in`);
+      rootStyle.setProperty("--row-gap", `${Number(dimensions.rowGap) || 0.27}in`);
+    }
+
+    function renderLayout(options) {
+      const settings = options || {};
+      const title = settings.title || ui.titleInput.value.trim() || "Untitled";
+      const podiumText = settings.podiumLabel || ui.podiumInput.value.trim() || "Podium";
+      const leftCounts = settings.leftCounts || parseCounts(ui.leftCountsInput.value);
+      const rightCounts = settings.rightCounts || parseCounts(ui.rightCountsInput.value);
       const normalized = normalizeCounts(leftCounts, rightCounts);
+      const dimensions = settings.dimensions || {
+        aisleWidth: Number(ui.aisleWidthInput.value) || 0.36,
+        seatWidth: Number(ui.seatWidthInput.value) || 0.52,
+        seatHeight: Number(ui.seatHeightInput.value) || 0.34,
+        seatGap: Number(ui.seatGapInput.value) || 0.04,
+        rowGap: Number(ui.rowGapInput.value) || 0.27
+      };
 
-      rootStyle.setProperty("--aisle-width", `${Number(ui.aisleWidthInput.value) || 0.36}in`);
-      rootStyle.setProperty("--seat-width", `${Number(ui.seatWidthInput.value) || 0.52}in`);
-      rootStyle.setProperty("--seat-height", `${Number(ui.seatHeightInput.value) || 0.34}in`);
-      rootStyle.setProperty("--seat-gap", `${Number(ui.seatGapInput.value) || 0.04}in`);
-      rootStyle.setProperty("--row-gap", `${Number(ui.rowGapInput.value) || 0.27}in`);
-
+      applyDimensions(dimensions);
       ui.sheetTitle.textContent = title;
       ui.podiumLabel.textContent = podiumText;
       ui.rows.innerHTML = "";
@@ -443,7 +553,11 @@
         ui.rows.appendChild(row);
       });
 
-      ui.statusMessage.textContent = normalized.message || "레이아웃을 생성했습니다.";
+      if (settings.rows) {
+        applySeatRows(settings.rows);
+      }
+
+      ui.statusMessage.textContent = settings.message || normalized.message || "레이아웃을 생성했습니다.";
     }
 
     function collectSeatsByRowAisleFirst() {
@@ -459,6 +573,29 @@
       return orderedSeats;
     }
 
+    function snapshotSeatRows() {
+      return Array.from(ui.rows.querySelectorAll(".row")).map((row) => ({
+        left: Array.from(row.querySelectorAll(".block.left .seat")).map((seat) => seat.textContent.trim()),
+        right: Array.from(row.querySelectorAll(".block.right .seat")).map((seat) => seat.textContent.trim())
+      }));
+    }
+
+    function applySeatRows(rows) {
+      const rowElements = Array.from(ui.rows.querySelectorAll(".row"));
+      rowElements.forEach((rowElement, rowIndex) => {
+        const rowData = rows[rowIndex] || { left: [], right: [] };
+        const leftSeats = Array.from(rowElement.querySelectorAll(".block.left .seat"));
+        const rightSeats = Array.from(rowElement.querySelectorAll(".block.right .seat"));
+
+        leftSeats.forEach((seat, seatIndex) => {
+          seat.textContent = rowData.left[seatIndex] || "";
+        });
+        rightSeats.forEach((seat, seatIndex) => {
+          seat.textContent = rowData.right[seatIndex] || "";
+        });
+      });
+    }
+
     function fillNames() {
       const names = ui.namesInput.value
         .split("\n")
@@ -467,7 +604,7 @@
 
       const seats = collectSeatsByRowAisleFirst();
       seats.forEach((seat, idx) => {
-        seat.textContent = names[idx] ?? "";
+        seat.textContent = names[idx] || "";
       });
 
       const filled = Math.min(names.length, seats.length);
@@ -485,12 +622,150 @@
       ui.statusMessage.textContent = "좌석 내용을 모두 비웠습니다.";
     }
 
-    ui.renderButton.addEventListener("click", renderLayout);
+    function setAuthMessage(message) {
+      ui.authMessage.textContent = message;
+    }
+
+    function updateRecordMeta(record) {
+      if (!record) {
+        ui.recordMeta.textContent = "새 seatmap을 만드는 중입니다.";
+        return;
+      }
+
+      ui.recordMeta.textContent = `현재 record: ${record.id} / 마지막 수정 ${SeatmapApp.formatDate(record.updated || record.created)}`;
+    }
+
+    function updateSaveButtonState() {
+      const auth = SeatmapApp.getStoredAuth();
+      ui.saveButton.disabled = !auth;
+    }
+
+    function buildPayload() {
+      const leftCounts = parseCounts(ui.leftCountsInput.value);
+      const rightCounts = parseCounts(ui.rightCountsInput.value);
+      const normalized = normalizeCounts(leftCounts, rightCounts);
+      const rows = snapshotSeatRows();
+      const seatCount = rows.reduce((sum, row) => sum + row.left.length + row.right.length, 0);
+
+      return {
+        title: ui.titleInput.value.trim() || "Untitled",
+        podiumLabel: ui.podiumInput.value.trim() || "Podium",
+        rowCount: normalized.left.length,
+        seatCount,
+        layout: {
+          leftCounts: normalized.left,
+          rightCounts: normalized.right,
+          dimensions: {
+            aisleWidth: Number(ui.aisleWidthInput.value) || 0.36,
+            seatWidth: Number(ui.seatWidthInput.value) || 0.52,
+            seatHeight: Number(ui.seatHeightInput.value) || 0.34,
+            seatGap: Number(ui.seatGapInput.value) || 0.04,
+            rowGap: Number(ui.rowGapInput.value) || 0.27
+          },
+          rows
+        }
+      };
+    }
+
+    function applyRecord(record) {
+      const layout = record.layout || {};
+      ui.titleInput.value = record.title || "";
+      ui.podiumInput.value = record.podiumLabel || "Podium";
+      ui.leftCountsInput.value = (layout.leftCounts || []).join(",");
+      ui.rightCountsInput.value = (layout.rightCounts || []).join(",");
+      ui.aisleWidthInput.value = layout.dimensions && layout.dimensions.aisleWidth ? layout.dimensions.aisleWidth : 0.36;
+      ui.seatWidthInput.value = layout.dimensions && layout.dimensions.seatWidth ? layout.dimensions.seatWidth : 0.52;
+      ui.seatHeightInput.value = layout.dimensions && layout.dimensions.seatHeight ? layout.dimensions.seatHeight : 0.34;
+      ui.seatGapInput.value = layout.dimensions && layout.dimensions.seatGap ? layout.dimensions.seatGap : 0.04;
+      ui.rowGapInput.value = layout.dimensions && layout.dimensions.rowGap ? layout.dimensions.rowGap : 0.27;
+
+      renderLayout({
+        title: record.title,
+        podiumLabel: record.podiumLabel,
+        leftCounts: layout.leftCounts || [],
+        rightCounts: layout.rightCounts || [],
+        dimensions: layout.dimensions || {},
+        rows: layout.rows || [],
+        message: "저장된 seatmap을 불러왔습니다."
+      });
+
+      updateRecordMeta(record);
+    }
+
+    async function loadCurrentRecord() {
+      if (!currentRecordId) {
+        renderLayout();
+        updateRecordMeta(null);
+        return;
+      }
+
+      const auth = SeatmapApp.getStoredAuth();
+      if (!auth) {
+        renderLayout();
+        ui.statusMessage.textContent = "기존 seatmap을 불러오려면 먼저 로그인해야 합니다.";
+        return;
+      }
+
+      const record = await SeatmapApp.getSeatmap(currentRecordId);
+      applyRecord(record);
+    }
+
+    ui.renderButton.addEventListener("click", () => renderLayout());
     ui.fillNamesButton.addEventListener("click", fillNames);
     ui.clearSeatButton.addEventListener("click", clearSeats);
     ui.printButton.addEventListener("click", () => window.print());
 
-    renderLayout();
+    ui.loginButton.addEventListener("click", async () => {
+      try {
+        const auth = await SeatmapApp.login(ui.emailInput.value.trim(), ui.passwordInput.value);
+        setAuthMessage(`${auth.record.email} 계정으로 로그인되었습니다.`);
+        updateSaveButtonState();
+        await loadCurrentRecord();
+      } catch (error) {
+        setAuthMessage(error.message || "로그인에 실패했습니다.");
+      }
+    });
+
+    ui.logoutButton.addEventListener("click", () => {
+      SeatmapApp.logout();
+      updateSaveButtonState();
+      setAuthMessage("로그아웃했습니다.");
+      if (currentRecordId) {
+        ui.statusMessage.textContent = "로그아웃되어 저장본을 더 이상 불러올 수 없습니다.";
+      }
+    });
+
+    ui.saveButton.addEventListener("click", async () => {
+      try {
+        const payload = buildPayload();
+        const saved = await SeatmapApp.saveSeatmap(payload, currentRecordId);
+        currentRecordId = saved.id;
+        const url = new URL(window.location.href);
+        url.searchParams.set("id", currentRecordId);
+        window.history.replaceState({}, "", url);
+        updateRecordMeta(saved);
+        ui.statusMessage.textContent = currentRecordId === saved.id
+          ? "PocketBase에 저장했습니다. 같은 URL로 다시 수정할 수 있습니다."
+          : "PocketBase에 새 seatmap을 저장했습니다.";
+      } catch (error) {
+        ui.statusMessage.textContent = error.message || "저장에 실패했습니다.";
+      }
+    });
+
+    (async () => {
+      try {
+        const auth = await SeatmapApp.verifyAuth();
+        if (auth) {
+          setAuthMessage(`${auth.record.email} 계정으로 로그인되어 있습니다.`);
+        }
+        updateSaveButtonState();
+        await loadCurrentRecord();
+      } catch (error) {
+        renderLayout();
+        setAuthMessage(error.message || "PocketBase 연결에 실패했습니다.");
+        updateSaveButtonState();
+      }
+    })();
   </script>
 </body>
 </html>
