@@ -131,6 +131,14 @@
       font-size: 18px;
     }
 
+    .auth-card.is-authenticated .login-only {
+      display: none;
+    }
+
+    .auth-card:not(.is-authenticated) .auth-only {
+      display: none;
+    }
+
     .field {
       display: grid;
       gap: 6px;
@@ -262,16 +270,20 @@
 
       <section class="auth-card" aria-label="PocketBase 로그인">
         <h2>로그인</h2>
-        <div class="field">
-          <label for="emailInput">이메일</label>
-          <input id="emailInput" type="email" placeholder="you@example.com">
+        <div class="login-only">
+          <div class="field">
+            <label for="emailInput">이메일</label>
+            <input id="emailInput" type="email" placeholder="you@example.com">
+          </div>
+          <div class="field">
+            <label for="passwordInput">비밀번호</label>
+            <input id="passwordInput" type="password" placeholder="비밀번호">
+          </div>
+          <div class="auth-actions">
+            <button class="primary" id="loginButton" type="button">로그인</button>
+          </div>
         </div>
-        <div class="field">
-          <label for="passwordInput">비밀번호</label>
-          <input id="passwordInput" type="password" placeholder="비밀번호">
-        </div>
-        <div class="auth-actions">
-          <button class="primary" id="loginButton" type="button">로그인</button>
+        <div class="auth-actions auth-only">
           <button class="secondary" id="logoutButton" type="button">로그아웃</button>
         </div>
         <div class="status" id="authStatus">로그인하면 저장된 seatmap 목록이 표시됩니다.</div>
@@ -294,6 +306,7 @@
   <script src="./seatmap-app.js"></script>
   <script>
     const ui = {
+      authCard: document.querySelector(".auth-card"),
       authStatus: document.getElementById("authStatus"),
       emailInput: document.getElementById("emailInput"),
       passwordInput: document.getElementById("passwordInput"),
@@ -307,6 +320,10 @@
 
     function setAuthMessage(message) {
       ui.authStatus.textContent = message;
+    }
+
+    function setAuthUi(auth) {
+      ui.authCard.classList.toggle("is-authenticated", Boolean(auth));
     }
 
     function renderList(items) {
@@ -335,12 +352,14 @@
     async function refreshList() {
       const auth = SeatmapApp.getStoredAuth();
       if (!auth) {
+        setAuthUi(null);
         ui.listMeta.textContent = "로그인 후 개인 seatmap 목록을 볼 수 있습니다.";
         renderList([]);
         setAuthMessage("로그인하면 저장된 seatmap 목록이 표시됩니다.");
         return;
       }
 
+      setAuthUi(auth);
       const result = await SeatmapApp.listSeatmaps();
       const items = result.items || [];
       ui.listMeta.textContent = `${auth.record.email} 계정으로 ${items.length}개의 seatmap을 조회했습니다.`;
@@ -351,6 +370,7 @@
     ui.loginButton.addEventListener("click", async () => {
       try {
         const auth = await SeatmapApp.login(ui.emailInput.value.trim(), ui.passwordInput.value);
+        setAuthUi(auth);
         setAuthMessage(`${auth.record.email} 계정으로 로그인되었습니다.`);
         await refreshList();
       } catch (error) {
@@ -360,6 +380,7 @@
 
     ui.logoutButton.addEventListener("click", () => {
       SeatmapApp.logout();
+      setAuthUi(null);
       renderList([]);
       ui.listMeta.textContent = "로그인 전입니다.";
       setAuthMessage("로그아웃했습니다.");
@@ -375,9 +396,11 @@
 
     (async () => {
       try {
-        await SeatmapApp.verifyAuth();
+        const auth = await SeatmapApp.verifyAuth();
+        setAuthUi(auth);
         await refreshList();
       } catch (error) {
+        setAuthUi(null);
         setAuthMessage(error.message || "PocketBase 연결에 실패했습니다.");
       }
     })();
